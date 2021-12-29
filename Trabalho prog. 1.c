@@ -52,8 +52,8 @@ int main() {
 
     printf("\nFechando o arquivo e saindo do programa...");
     fclose(arq);
-    system("del ferramentas.dat");
-    system("ren ArquivoAuxiliar.dat ferramentas.dat");
+    system("del ferramentas.txt");
+    system("ren ArquivoAuxiliar.txt ferramentas.txt");
     return 0;
 }
 
@@ -66,7 +66,7 @@ void menu() {
     char opcao;
     do {         
         printf("Cadastro de Ferramentas\n");
-        printf("I - Inclusão\n");
+        printf("I - Inclusão\n"); // Com problema ao finalizar
         printf("G - Consulta Geral\n");
         printf("E - Consulta Específica\n");
         printf("A - Alteração\n");
@@ -104,8 +104,8 @@ void exibeferramenta (struct ferramenta fer) {
 }
 
 void inserirferramenta() {
-    printf("O código desta ferrmaneta será: %i", random());
-    
+    printf("O código desta ferrmaneta será: %i\n", random());
+
     printf("Digite o nome da ferramenta: ");
     gets(fer[indice].nome);
 
@@ -121,11 +121,14 @@ void inserirferramenta() {
 }
 
 void inclusao() {
+    char nome;
     fseek(arq, 0, SEEK_SET);
-
     // Para garantir que a ferramenta não seja cadastrada duas vezes
+    printf("Digite o nome da ferramenta: ");
+    gets(&nome);
+
     while(fread(&fer, sizeof(fer), 1, arq)) {
-   	    if(fer[indice].codigo==index) {
+   	    if(fer[indice].nome==nome) {
 	        achou=1;
 	        break;
         }
@@ -133,7 +136,7 @@ void inclusao() {
 
     if(achou==1) {
         char visu;
-        printf("\nCódigo da ferramenta já cadastrado! Deseja visualizar os dados das ferramentas cadastradas?");
+        printf("\nNome da ferramenta já cadastrado! Deseja visualizar os dados das ferramentas cadastradas?");
         scanf("%c", &visu);
         if(visu=='s' || visu=='C') {
             consultaG();
@@ -148,7 +151,7 @@ void inclusao() {
         fwrite(&fer, sizeof(fer), 1, arq);
         printf("\n\nFerramenta cadastrada com sucesso!!\n");  
     }
-   system("pause");
+   system("pause"); // Erro: programa termina ao invez de voltar para o menu
 }
 
 void consultaG() {
@@ -158,12 +161,11 @@ void consultaG() {
     
     while (fread(&fer, sizeof(fer), 1, arq)) {
        if(fer[indice].codigo!=9999) {
-       	    exibeferramenta (fer);
+       	    exibeferramenta (fer[indice]);
+            indice++;
 	    }
     }
-    limpaBufferTeclado();
     system("pause");
-    limpaBufferTeclado();
 }
 
 void consultaE() {
