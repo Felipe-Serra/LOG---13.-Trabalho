@@ -121,14 +121,14 @@ void inserirferramenta() {
 }
 
 void inclusao() {
-    char nome1[40];
+    char nome[40];
     fseek(arq, 0, SEEK_SET);
     // Para garantir que a ferramenta não seja cadastrada duas vezes
     printf("Digite o nome da ferramenta a ser cadastrada: ");
-    gets(nome1);
+    gets(nome);
 
     while(fread(&fer, sizeof(fer), 2, arq)) {
-   	    if(fer[indice].nome==nome1) {
+   	    if(strncmp(fer[indice].nome, nome, 40)==0) {
 	        achou=1;
 	        break;
         }
@@ -136,7 +136,7 @@ void inclusao() {
     
     if(achou==1) {
         char visu;
-        printf("\nNome da ferramenta já cadastrado! Deseja visualizar os dados das ferramentas cadastradas?");
+        printf("\nNome da ferramenta já cadastrado! Deseja visualizar os dados das ferramentas cadastradas? ");
         scanf("%c", &visu);
         if(visu=='s' || visu=='S') {
             consultaG();
@@ -150,7 +150,7 @@ void inclusao() {
         fwrite(&fer, sizeof(fer), 1, arq);
         printf("\n\nFerramenta cadastrada com sucesso!!\n");  
     }
-   system("pause"); // Erro: programa termina ao invez de voltar para o menu
+   system("pause");
 }
 
 // FUNCIONA, NÃO ALTERAR
@@ -184,7 +184,7 @@ void consultaE() {
             system("pause");
             achou=1;
         }
-        else printf("\nLimite de ferramentas cadastradas atingido!!\n");
+        else if(fer[indice].codigo>=9999) printf("\nLimite de ferramentas cadastradas atingido!!\n");
     }
    if(achou!=1) {
    	  printf( "\n\n\nCódigo não encontrado\n\n");
@@ -199,7 +199,7 @@ void alteracao() {
     fseek(arq, 0, SEEK_SET);
     
     printf("Digite o código do produto a ser consultado: ");
-    scanf("%i", &index);
+    scanf("%i%*c", &index);
 
     while(fread(&fer, sizeof(fer), 1, arq)) {
    	    if(fer[indice].codigo==index) {
@@ -213,17 +213,13 @@ void alteracao() {
        printf("\nDeseja realmente alterar? (S/N) ");
        scanf(" %c%*c",&resp);
 
-	   switch(resp) {
-        case 's':
-            case 'S':
-             inserirferramenta();
-		   fseek(arq, sizeof(fer) * -1, SEEK_CUR);
-	       fwrite(&fer, sizeof(fer), 1, arq);
-	       printf("\nDados foram alterados\n");  
-           break;
-           
-           default: printf("\nDados não foram alterados\n"); 
-        }    
+	   if((resp=='s') || (resp == 'S')) {
+            inserirferramenta();
+		    fseek(arq, sizeof(fer) * -1, SEEK_CUR);
+	        fwrite(&fer, sizeof(fer), 1, arq);
+	        printf("\nDados foram alterados\n");
+        }  
+        else printf("\nDados não foram alterados\n");             
     }
 
    else printf("\nCódigo não cadastrado\n"); 
