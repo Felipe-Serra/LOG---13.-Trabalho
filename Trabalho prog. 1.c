@@ -16,8 +16,7 @@ struct ferramenta {
 
 FILE *arq;
 
-int achou=0, indice=0;
-int index;
+int achou=0, indice=0, index=0;
 
 void limpaBufferTeclado();
 void menu();
@@ -67,13 +66,13 @@ void menu() {
     do {         
         printf("Cadastro de Ferramentas\n");
         printf("I - Inclusão\n"); // Com problema ao finalizar
-        printf("G - Consulta Geral\n");
-        printf("E - Consulta Específica\n");
+        printf("G - Consulta Geral\n"); // FUNCIONA, NÃO ALTERAR
+        printf("E - Consulta Específica\n"); // FUNCIONA, NÃO ALTERAR
         printf("A - Alteração\n");
         printf("X - Exclusão\n"); //Não funcional
         printf("F - Fim do Programa\n");
         printf("\nDigite a opção desejada: ");
-        scanf("%c%*c", &opcao);
+        scanf(" %c%*c", &opcao);
         switch(opcao) {
             case 'i':
                 case 'I': inclusao(); break;
@@ -105,6 +104,7 @@ void exibeferramenta (struct ferramenta fer) {
 
 void inserirferramenta() {
     printf("O código desta ferrmaneta será: %i\n", random());
+    fer[indice].codigo=random();
 
     printf("Digite o nome da ferramenta: ");
     gets(fer[indice].nome);
@@ -121,13 +121,14 @@ void inserirferramenta() {
 }
 
 void inclusao() {
-    char nome;
+    char nome1[40];
     fseek(arq, 0, SEEK_SET);
     // Para garantir que a ferramenta não seja cadastrada duas vezes
-    //printf("Digite o nome da ferramenta: ");    gets(&nome);
-    
-    while(fread(&fer, sizeof(fer), 1, arq)) {
-   	    if(fer[indice].nome==nome) {
+    printf("Digite o nome da ferramenta a ser cadastrada: ");
+    gets(nome1);
+
+    while(fread(&fer, sizeof(fer), 2, arq)) {
+   	    if(fer[indice].nome==nome1) {
 	        achou=1;
 	        break;
         }
@@ -139,6 +140,7 @@ void inclusao() {
         scanf("%c", &visu);
         if(visu=='s' || visu=='S') {
             consultaG();
+            limpaBufferTeclado();
         }
     }
 
@@ -151,8 +153,10 @@ void inclusao() {
    system("pause"); // Erro: programa termina ao invez de voltar para o menu
 }
 
+// FUNCIONA, NÃO ALTERAR
 void consultaG() {
     system("cls");
+    indice=0;
     printf("\n*********Ferramentas Cadastradas********\n");
     fseek(arq, 0, SEEK_SET);
     
@@ -164,8 +168,9 @@ void consultaG() {
     }
     system("pause");
 }
-
+// FUNCIONA, NÃO ALTERAR
 void consultaE() {
+    indice=0;
     system("cls"); //Limpa a tela 
     printf("\n*********Ferramentas Cadastradas********\n");
     fseek(arq, 0, SEEK_SET);
@@ -190,6 +195,7 @@ void consultaE() {
 
 void alteracao() {
     char resp;
+    indice=0;
     fseek(arq, 0, SEEK_SET);
     
     printf("Digite o código do produto a ser consultado: ");
@@ -204,17 +210,20 @@ void alteracao() {
 
     if(achou==1) {
        exibeferramenta (fer[indice]);
-       printf("\nDeseja realmente alterar? (S/N)");
-       scanf("%c%*c",&resp);
+       printf("\nDeseja realmente alterar? (S/N) ");
+       scanf(" %c%*c",&resp);
 
-	   if((resp=='s') || (resp == 'S')) {
-	       inserirferramenta();
+	   switch(resp) {
+        case 's':
+            case 'S':
+             inserirferramenta();
 		   fseek(arq, sizeof(fer) * -1, SEEK_CUR);
 	       fwrite(&fer, sizeof(fer), 1, arq);
-	       printf("\nDados foram alterados\n");    
-        }
-
-	   else printf("\nDados não foram alterados\n");      
+	       printf("\nDados foram alterados\n");  
+           break;
+           
+           default: printf("\nDados não foram alterados\n"); 
+        }    
     }
 
    else printf("\nCódigo não cadastrado\n"); 
@@ -243,7 +252,7 @@ void exclusao() {
        printf("\nDeseja realmente excluir ? (S/N)");
        scanf("%c%*c",&resp);
 	   if((resp=='s') || (resp == 'S')) {
-	        arqAux = fopen("ArquivoAuxiliar.dat", "w");
+	        arqAux = fopen("ArquivoAuxiliar.txt", "w");
 
             while (fread(&fer, sizeof(fer), 1, arq)) {
                 if(fer[indice].codigo!=9999)
