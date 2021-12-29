@@ -100,7 +100,7 @@ void exibeferramenta (struct ferramenta fer) {
   printf ("Nome da ferramenta: %s\n", fer.nome);
   printf ("Qtde da ferramenta: %i\n", fer.qtde);
   printf ("Preço da ferramenta: %5.2f\n", fer.preco);
-  printf("Valor total em estoque %.2f\n", fer.totalEstoque);
+  printf("Valor total em estoque %.2f\n\n", fer.totalEstoque);
 }
 
 void inserirferramenta() {
@@ -124,29 +124,26 @@ void inclusao() {
     char nome;
     fseek(arq, 0, SEEK_SET);
     // Para garantir que a ferramenta não seja cadastrada duas vezes
-    printf("Digite o nome da ferramenta: ");
-    gets(&nome);
-
+    //printf("Digite o nome da ferramenta: ");    gets(&nome);
+    
     while(fread(&fer, sizeof(fer), 1, arq)) {
    	    if(fer[indice].nome==nome) {
 	        achou=1;
 	        break;
         }
     }
-
+    
     if(achou==1) {
         char visu;
         printf("\nNome da ferramenta já cadastrado! Deseja visualizar os dados das ferramentas cadastradas?");
         scanf("%c", &visu);
-        if(visu=='s' || visu=='C') {
+        if(visu=='s' || visu=='S') {
             consultaG();
         }
     }
 
     else {
-   	    fer[indice].codigo=index;
-   	   
-        inserirferramenta();
+   	    inserirferramenta();
         indice++;
         fwrite(&fer, sizeof(fer), 1, arq);
         printf("\n\nFerramenta cadastrada com sucesso!!\n");  
