@@ -2,6 +2,7 @@
 #include <locale.h> 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 struct ferramenta {
     int codigo;
@@ -27,6 +28,14 @@ void consultaG();
 void consultaE();
 void alteracao();
 void exclusao();
+
+int random() { 
+    int x;
+    srand(time(NULL));
+    
+    x = 1 + (rand() % 100);
+    return x;
+}
 
 int main() {
     char nome_arquivo[]="ferramentas.txt";
@@ -95,6 +104,8 @@ void exibeferramenta (struct ferramenta fer) {
 }
 
 void inserirferramenta() {
+    printf("O código desta ferrmaneta será: %i", random());
+    
     printf("Digite o nome da ferramenta: ");
     gets(fer[indice].nome);
 
@@ -110,9 +121,6 @@ void inserirferramenta() {
 }
 
 void inclusao() {
-    printf("Digite o Código da ferramenta: ");
-    scanf("%i%*c", &index);
-
     fseek(arq, 0, SEEK_SET);
 
     // Para garantir que a ferramenta não seja cadastrada duas vezes
@@ -249,7 +257,3 @@ void exclusao() {
     fclose(arqAux);      
     system("pause");
 }
-
-
-
-
