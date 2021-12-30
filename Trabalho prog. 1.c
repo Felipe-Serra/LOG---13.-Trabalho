@@ -17,6 +17,7 @@ struct ferramenta {
 FILE *arq;
 
 int achou=0, indice=0, index=0;
+#define MAX 17
 
 void limpaBufferTeclado();
 void menu();
@@ -103,17 +104,18 @@ void exibeferramenta (struct ferramenta fer) {
 }
 
 void inserirferramenta() {
-    printf("O código desta ferrmaneta será: %i\n", random());
-    fer[indice].codigo=random();
-
+    printf("O código desta ferrmaneta será: "); //%i\n", random());
+    //fer[indice].codigo=random();
+    scanf(" %i%*c", &fer[indice].codigo);
+    
     printf("Digite o nome da ferramenta: ");
     gets(fer[indice].nome);
 
     printf("Digite a quantidade de ferramentas: ");
-    scanf("%i%*c", &fer[indice].qtde);
+    scanf(" %i%*c", &fer[indice].qtde);
 
     printf("Digite o preço de ferramentas: ");
-    scanf("%f%*c", &fer[indice].preco);
+    scanf(" %f%*c", &fer[indice].preco);
 
     fer[indice].totalEstoque = (fer[indice].qtde * fer[indice].preco);
     printf("Valor total em estoque %.2f", fer[indice].totalEstoque);
@@ -124,8 +126,7 @@ void inclusao() {
     char nome[40];
     fseek(arq, 0, SEEK_SET);
     // Para garantir que a ferramenta não seja cadastrada duas vezes
-    printf("Digite o nome da ferramenta a ser cadastrada: ");
-    gets(nome);
+    printf("Digite o nome da ferramenta a ser cadastrada: "); gets(nome);
 
     while(fread(&fer, sizeof(fer), 2, arq)) {
    	    if(strncmp(fer[indice].nome, nome, 40)==0) {
@@ -199,7 +200,7 @@ void alteracao() {
     fseek(arq, 0, SEEK_SET);
     
     printf("Digite o código do produto a ser consultado: ");
-    scanf("%i%*c", &index);
+    scanf(" %i%*c", &index);
 
     while(fread(&fer, sizeof(fer), 1, arq)) {
    	    if(fer[indice].codigo==index) {
@@ -222,7 +223,7 @@ void alteracao() {
         else printf("\nDados não foram alterados\n");             
     }
 
-   else printf("\nCódigo não cadastrado\n"); 
+   else printf("\nCódigo não cadastrado\n");  
    system("pause");
 }
 
