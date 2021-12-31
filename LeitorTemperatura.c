@@ -77,7 +77,7 @@ void exibeMaior(){
     while (fscanf (arq,"%s %d  %s", texto, &temp, resto)!= EOF) {
 
         //printf("%d\n",temp);
-        
+
         if (temp > maior) maior = temp;
     }
 
@@ -98,10 +98,9 @@ void exibeMenor(){
 
         if (temp > maior && temp>=60) {
            maior = temp;
-           printf("Maior1:%i Menor1:%i\n",maior, menor);
         }
-
-        else if (temp<maior && temp<menor && temp>=60){ menor = temp; printf("Menor2:%i\n",menor);};
+        else if (temp<maior && temp<menor && temp>=60)
+            menor = temp;        
     }
 
     printf("Menor valor de temperatura: %d\n\n", menor);
