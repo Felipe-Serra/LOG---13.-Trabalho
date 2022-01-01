@@ -66,9 +66,9 @@ void menu() {
     char opcao;
     do {         
         printf("Cadastro de Ferramentas\n");
-        printf("I - Inclusão\n"); // Com problema ao finalizar
-        printf("G - Consulta Geral\n"); // FUNCIONA, NÃO ALTERAR
-        printf("E - Consulta Específica\n"); // FUNCIONA, NÃO ALTERAR
+        printf("I - Inclusão\n"); // Com problema ao incluir itens
+        printf("G - Consulta Geral\n");
+        printf("E - Consulta Específica\n");
         printf("A - Alteração\n");
         printf("X - Exclusão\n"); //Não funcional
         printf("F - Fim do Programa\n");
@@ -104,9 +104,9 @@ void exibeferramenta (struct ferramenta fer) {
 }
 
 void inserirferramenta() {
-    printf("O código desta ferrmaneta será: "); //%i\n", random());
-    //fer[indice].codigo=random();
-    scanf(" %i%*c", &fer[indice].codigo);
+    printf("O código desta ferrmaneta será: %i\n", random());
+    fer[indice].codigo=random();
+    //scanf(" %i%*c", &fer[indice].codigo);
     
     printf("Digite o nome da ferramenta: ");
     gets(fer[indice].nome);
@@ -122,14 +122,15 @@ void inserirferramenta() {
     
 }
 
+//NÃO FUNCIONA
 void inclusao() {
     char nome[40];
     fseek(arq, 0, SEEK_SET);
     // Para garantir que a ferramenta não seja cadastrada duas vezes
-    printf("Digite o nome da ferramenta a ser cadastrada: "); gets(nome);
+    //printf("Digite o nome da ferramenta a ser cadastrada: "); gets(nome);
 
-    while(fread(&fer, sizeof(fer), 2, arq)) {
-   	    if(strncmp(fer[indice].nome, nome, 40)==0) {
+    while(fread(&fer, sizeof(fer), 1, arq)) {
+   	    if(strncmp(fer[indice].nome, nome, 20)==0) {
 	        achou=1;
 	        break;
         }
@@ -138,7 +139,7 @@ void inclusao() {
     if(achou==1) {
         char visu;
         printf("\nNome da ferramenta já cadastrado! Deseja visualizar os dados das ferramentas cadastradas? ");
-        scanf("%c", &visu);
+        scanf(" %c", &visu);
         if(visu=='s' || visu=='S') {
             consultaG();
             limpaBufferTeclado();
@@ -147,8 +148,8 @@ void inclusao() {
 
     else {
    	    inserirferramenta();
-        indice++;
         fwrite(&fer, sizeof(fer), 1, arq);
+        indice++;
         printf("\n\nFerramenta cadastrada com sucesso!!\n");  
     }
    system("pause");
@@ -193,7 +194,7 @@ void consultaE() {
     }
 
 }
-
+// FUNCIONA, NÃO ALTERAR
 void alteracao() {
     char resp;
     indice=0;
@@ -226,7 +227,7 @@ void alteracao() {
    else printf("\nCódigo não cadastrado\n");  
    system("pause");
 }
-
+//NÃO FUNCIONA
 void exclusao() {
     char resp;
     FILE *arqAux;
@@ -234,8 +235,16 @@ void exclusao() {
     system("cls");
     fseek(arq, 0, SEEK_SET);
 
-    printf("Digite o código da ferramenta:");
-    scanf("%i%*c", &index);
+    if (( arq = fopen("ferramentas.txt" , "r"))==NULL)
+	{												
+ 	   printf("O arquivo %s n�o pode ser aberto... \n ","ferramentas.txt");
+       printf("O programa termina aqui... \n\n");
+       system("pause");
+       exit(0);
+    }
+
+    printf("Digite o código da ferramenta: ");
+    scanf(" %i%*c", &index);
 
     while(fread(&fer, sizeof(fer), 1, arq)) {
    	    if(fer[indice].codigo==index) {
@@ -247,18 +256,27 @@ void exclusao() {
     if(achou==1) {
        exibeferramenta (fer[indice]);
        printf("\nDeseja realmente excluir ? (S/N)");
-       scanf("%c%*c",&resp);
+       scanf(" %c%*c",&resp);
 	   if((resp=='s') || (resp == 'S')) {
+           
+            fer[indice].codigo=9999;
+            
+            fseek(arq, sizeof(fer) * -1, SEEK_CUR);
 	        arqAux = fopen("ArquivoAuxiliar.txt", "w");
 
             while (fread(&fer, sizeof(fer), 1, arq)) {
                 if(fer[indice].codigo!=9999)
                     fwrite(&fer, sizeof(fer), 1, arqAux);
             }
+            printf("Dados apagados com sucesso!");
         }
 	    else printf("\nDados não foram excluidos!!!\n");    
     }
     else printf("\nCódigo não cadastrado\n");
-    fclose(arqAux);      
-    system("pause");
+    fclose(arq);
+    fclose(arqAux);
+    system("del ferramentas.txt");
+    system("ren ArquivoAuxiliar.txt ferramentas.txt");
+    limpaBufferTeclado();
 }
+
